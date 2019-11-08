@@ -89,87 +89,89 @@
             <div class="card card-success">
                 <div class="card-header">
                     <h3 class="card-title">The 5 Last Tasks</h3>
-                </div
+                </div>
+                <div class="card-body p-0">
+
+                    <ul class="timeline timeline-inverse">
+                        <!-- timeline time label -->
+
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        @foreach($Content as $C)
+                            <?php
+                            $fa = rand(1,5);
+                            $co = rand(1,5);
+                            switch ($fa){
+                                case 1:
+                                    $fa_icon= "fa-user";
+                                    break;
+                                case 2:
+                                    $fa_icon= "fa-mail-forward";
+                                    break;
+                                case 3:
+                                    $fa_icon= "fa-tasks";
+                                    break;
+                                case 4:
+                                    $fa_icon= "fa-dashboard";
+                                    break;
+                                default:
+                                    $fa_icon= "fa-user-secret";
+                                    break;
+                            }
+                            switch ($co){
+                                case 1:
+                                    $color = "bg-primary";
+                                    break;
+                                case 2:
+                                    $color = "bg-success";
+                                    break;
+                                case 3:
+                                    $color = "bg-info";
+                                    break;
+                                case 4:
+                                    $color = "bg-danger";
+                                    break;
+                                default:
+                                    $color = "bg-warning";
+                                    break;
+                            }
+                            ?>
+                            <li>
+                                <i class="fa {{ $fa_icon }} {{ $color }}"></i>
+
+                                <div class="timeline-item">
+                                    <span class="time"><i class="fa fa-clock-o"></i> <?= date('H:i',strtotime($C['created_at'])) ?></span>
+
+                                    <h3 class="timeline-header"> @if($C['done'])<i style="color: green;font-size: 20px;" class="fa fa-check-square"></i> @else <i style="color: green;font-size: 20px;" class="fa fa-square"></i>@endif <b>{{ $C['title'] }}</b></h3>
+
+                                    <div class="timeline-body">
+                                        {{ $C['description'] }}
+                                    </div>
+                                    <div class="timeline-footer">
+                                        @if($C['done'] != 1)<a href="{{ url('Task/Done/'.$C['id'] . '/?d=1') }}" class="btn btn-primary btn-sm">Done</a> @endif
+                                        <a href="{{ url('Task/Delete/'.$C['id'] . '/?d=1') }}" class="btn btn-danger btn-sm">Delete</a>
+                                    </div>
+                                </div>
+                            </li>
+                    @endforeach
+                    <!-- END timeline item -->
+                        <!-- timeline item -->
+
+                        <!-- END timeline item -->
+                        <!-- timeline item -->
+
+                        <!-- END timeline item -->
+                        <!-- timeline time label -->
+
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+
+                        <!-- END timeline item -->
+
+                    </ul>
+                </div>
+
             </div>
-            <br>
-            <ul class="timeline timeline-inverse">
-                <!-- timeline time label -->
-
-                <!-- /.timeline-label -->
-                <!-- timeline item -->
-                @foreach($Content as $C)
-                    <?php
-                        $fa = rand(1,5);
-                        $co = rand(1,5);
-                        switch ($fa){
-                            case 1:
-                                $fa_icon= "fa-user";
-                                break;
-                            case 2:
-                                $fa_icon= "fa-mail-forward";
-                                break;
-                            case 3:
-                                $fa_icon= "fa-tasks";
-                                break;
-                            case 4:
-                                $fa_icon= "fa-dashboard";
-                                break;
-                            default:
-                                $fa_icon= "fa-user-secret";
-                                break;
-                        }
-                        switch ($co){
-                            case 1:
-                                $color = "bg-primary";
-                                break;
-                            case 2:
-                                $color = "bg-success";
-                                break;
-                            case 3:
-                                $color = "bg-info";
-                                break;
-                            case 4:
-                                $color = "bg-danger";
-                                break;
-                            default:
-                                $color = "bg-warning";
-                                break;
-                        }
-                    ?>
-                <li>
-                    <i class="fa {{ $fa_icon }} {{ $color }}"></i>
-
-                    <div class="timeline-item">
-                        <span class="time"><i class="fa fa-clock-o"></i> {{ date('H:i',strtotime('created_at')) }}</span>
-
-                        <h3 class="timeline-header"> @if($C['done'])<i style="color: green;font-size: 20px;" class="fa fa-check-square"></i> @else <i style="color: green;font-size: 20px;" class="fa fa-square"></i>@endif <b>{{ $C['title'] }}</b></h3>
-
-                        <div class="timeline-body">
-                            {{ $C['description'] }}
-                        </div>
-                        <div class="timeline-footer">
-                            <a href="{{ url('Task/Done/'.$C['id'] . '/?d=1') }}" class="btn btn-primary btn-sm">Done</a>
-                            <a href="{{ url('Task/Delete/'.$C['id'] . '/?d=1') }}" class="btn btn-danger btn-sm">Delete</a>
-                        </div>
-                    </div>
-                </li>
-            @endforeach
-                <!-- END timeline item -->
-                <!-- timeline item -->
-
-                <!-- END timeline item -->
-                <!-- timeline item -->
-
-                <!-- END timeline item -->
-                <!-- timeline time label -->
-
-                <!-- /.timeline-label -->
-                <!-- timeline item -->
-
-                <!-- END timeline item -->
-
-            </ul>
-
             <div class="card card-info">
                 <div class="card-header">
                     <h3 class="card-title">not completed task(s) in last hour</h3>

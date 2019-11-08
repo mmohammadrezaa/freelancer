@@ -100,25 +100,44 @@ class AdminPanelConteroller extends Controller
     public function Tasks(Request $request,$action = null,$pid = null){
         switch ($action){
             case "Add":
-                if (!($request->isMethod('post'))){
-                    if (@$request->d != ''){
-                        return redirect('Dashboard')->with('messagee','you must send data with method post');
+                if ($request->isMethod('post')) {
+                    $request->validate([
+                        'title' => 'required',
+                    ]);
+                    $Edit = Tasks::create([
+                        'user_id' => auth()->user()->id,
+                        'title' => $request->post('title'),
+                        'description' => $request->post('description'),
+                        'date' => $request->post('date'),
+                    ]);
+                    if (@$request->d != '') {
+                        return redirect('Dashboard')->with('messages', 'successfully added');
                     }
-                    return redirect('Task/Add')->with('messagee','you must send data with method post');
+                    return redirect('Task/Edit/'.$Edit['id'])->with('messages', 'successfully added');
                 }
-                $request->validate([
-                    'title'          => 'required',
-                ]);
-                Tasks::create([
-                    'user_id'       => auth()->user()->id,
-                    'title'         => $request->post('title'),
-                    'description'   => $request->post('description'),
-                    'date'          => $request->post('date'),
-                ]);
-                if (@$request->d != ''){
-                    return redirect('Dashboard')->with('messages','successfully added');
+                return view('auth.Task.Add');
+                break;
+            case "Edit":
+                if ($pid == ''){
+                    return redirect('Task/Add')->with('messages','link is mistake');
                 }
-                return redirect('Task/Add')->with('messages','successfully added');
+                if ($request->isMethod('post')) {
+                    $request->validate([
+                        'title' => 'required',
+                    ]);
+                    Tasks::where("id", $pid)->update([
+                        'user_id' => auth()->user()->id,
+                        'title' => $request->post('title'),
+                        'description' => $request->post('description'),
+                        'date' => $request->post('date'),
+                    ]);
+                    if (@$request->d != '') {
+                        return redirect('Dashboard')->with('messages', 'successfully added');
+                    }
+                    return redirect('Task/Edit/'. $pid)->with('messages', 'successfully Edited');
+                }
+                $Edit = Tasks::where('id',$pid)->where('user_id',auth()->user()->id)->first();
+                return view('auth.Task.Add',['Edit' => $Edit]);
                 break;
             case "List":
                 if (!($request->isMethod('get'))){
@@ -127,8 +146,13 @@ class AdminPanelConteroller extends Controller
                     }
                     return redirect('Task/Add')->with('messagee','you must send data with method get');
                 }
-                $Content = Tasks::where('user_id',auth()->user()->id)->get();
-                return view('Task.List',['Content' => $Content,'count' => Tasks::count()]);
+                if ($pid == '') {
+                    $id = 0;
+                } else {
+                    $id = ($pid - 1) * 10;
+                }
+                $Content = Tasks::where('user_id',auth()->user()->id)->limit(10)->offset($id)->orderBy('id', 'DESC')->get();
+                return view('auth.Task.List',['Content' => $Content,'count' => Tasks::count(),"pid" => $pid]);
             case "Done":
                 if (!($request->isMethod('get'))){
                     if (@$request->d != ''){
@@ -142,7 +166,7 @@ class AdminPanelConteroller extends Controller
                 if (@$request->d != ''){
                     return redirect('Dashboard')->with('messages','successfully changed');
                 }
-                return redirect('Task/Add')->with('messages','successfully changed');
+                return redirect('Task/List')->with('messages','successfully changed');
             case "Delete":
                 if (!($request->isMethod('get'))){
                     if (@$request->d != ''){
@@ -154,7 +178,7 @@ class AdminPanelConteroller extends Controller
                 if (@$request->d != ''){
                     return redirect('Dashboard')->with('messages','successfully deleted');
                 }
-                return redirect('Task/Add')->with('messages','successfully deleted');
+                return redirect('Task/List')->with('messages','successfully deleted');
         }
     }
 }

@@ -93,6 +93,30 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item has-treeview @if(url()->current() == url('Task/Add') || url()->current() == url('Task/Edit/'.@$Edit['id']) || url()->current() == url('Task/List') || url()->current() == url('Task/Filter')) menu-open @endif">
+                            <a href="#" class="nav-link @if(url()->current() == url('Task/Add') || url()->current() == url('Task/Edit/'.@$Edit['id']) || url()->current() == url('Task/List') || url()->current() == url('Task/Filter')) active @endif">
+                                <i class="nav-icon fa fa-tasks"></i>
+                                <p>
+                                    Tasks
+                                    <i class="right fa fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ url('Task/Add')}}" class="nav-link @if(url()->current() == url('Task/Add') || url()->current() == url('Task/Edit/'.@$Edit['id'])) active @endif">
+                                        <i class="fa fa-circle-o nav-icon"></i>
+                                        <p>Add</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('Task/List')}}" class="nav-link @if(url()->current() == url('Task/List') || url()->current() == url('Task/Filter')) active @endif">
+                                        <i class="fa fa-circle-o nav-icon"></i>
+                                        <p>List</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item">
                             <a href="{{ route('logout')}}" class="nav-link">
                                 <i class="nav-icon fa fa-sign-out"></i>
@@ -216,23 +240,24 @@
         $previous = '';
         $number_data = 1;
         $n_d = '';
-    foreach ($not_completed as $nc){
-        $d_t = date('H:i',strtotime($nc['created_at']));
-        if ($previous != $d_t){
-            $n_d .= $number_data;
-            $number_data = 1;
-            $time_data .= "\"" . $d_t . "\"";
-            if ($x < count($not_completed)){
-                $n_d .= ",";
-                $time_data .= ",";
+        if (@count($not_completed) > 0){
+            foreach ($not_completed as $nc){
+                $d_t = date('H:i',strtotime($nc['created_at']));
+                if ($previous != $d_t){
+                    $n_d .= $number_data;
+                    $number_data = 1;
+                    $time_data .= "\"" . $d_t . "\"";
+                    if ($x < count($not_completed)){
+                        $n_d .= ",";
+                        $time_data .= ",";
+                    }
+                }else{
+                    $number_data++;
+                }
+                $previous = $d_t;
+                $x++;
             }
-        }else{
-            $number_data++;
         }
-        $previous = $d_t;
-        $x++;
-    }
-    echo $time_data;
 ?>
 <script>
 

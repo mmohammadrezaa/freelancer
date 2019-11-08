@@ -23,6 +23,6 @@ class Gh_class {
             $pages[] = '<li class="page-item"><a class="page-link" href="'.sprintf($link, $x).'">'.($x == $cur_page ? '<strong>'.$x.'</strong>' : $x).'</a></li>';
 
         if ($page_count > 1)
-            echo '<div class="card-tools"><ul class="pagination pagination-sm m-0 float-right">'.$previous_page.$first_page.implode('', $pages).$last_page.$next_page.'</ul></div>';
+            echo '<div><ul class="pagination pagination-sm m-0">'.$previous_page.$first_page.implode('', $pages).$last_page.$next_page.'</ul></div>';
     }
 }
