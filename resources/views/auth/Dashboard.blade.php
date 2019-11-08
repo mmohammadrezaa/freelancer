@@ -1,5 +1,12 @@
 @extends('layouts/masterpage')
 @section('content')
+    <script>
+        var lineChartCanvas          = $('#lineChart').get(0).getContext('2d');
+        var lineChart                = new Chart(lineChartCanvas);
+        var lineChartOptions         = areaChartOptions;
+        lineChartOptions.datasetFill = false;
+        lineChart.Line(areaChartData, lineChartOptions);
+    </script>
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -135,7 +142,7 @@
                     <div class="timeline-item">
                         <span class="time"><i class="fa fa-clock-o"></i> {{ date('H:i',strtotime('created_at')) }}</span>
 
-                        <h3 class="timeline-header"><b>{{ $C['title'] }}</b></h3>
+                        <h3 class="timeline-header"> @if($C['done'])<i style="color: green;font-size: 20px;" class="fa fa-check-square"></i> @else <i style="color: green;font-size: 20px;" class="fa fa-square"></i>@endif <b>{{ $C['title'] }}</b></h3>
 
                         <div class="timeline-body">
                             {{ $C['description'] }}
@@ -162,6 +169,26 @@
                 <!-- END timeline item -->
 
             </ul>
-        </div>
+
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">not completed task(s) in last hour</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="lineChart" style="height:250px"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- BAR CHART -->
     </section>
 @endsection

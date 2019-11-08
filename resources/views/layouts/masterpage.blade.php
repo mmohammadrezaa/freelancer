@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{ url('themes/') }}/dist/css/bootstrap.min.css">
     <!-- template rtl version -->
     <link rel="stylesheet" href="{{ url('themes/') }}/dist/css/style.css">
+    <title>jQuery UI Datepicker - Default functionality</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/resources/demos/style.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -30,11 +31,6 @@
 
     <link rel="stylesheet" href="{{ url('themes/') }}/plugins/iCheck/all.css">
     <link rel="stylesheet" href="{{ url('themes/') }}/plugins/select2/select2.min.css">
-    <script type="text/javascript">
-        $( function() {
-            $( "#datepicker" ).datepicker();
-        } );
-    </script>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -213,37 +209,119 @@
 <script src="{{ url('themes/') }}/plugins/select2/select2.full.min.js"></script>
 {{--<script src="{{ url('themes/') }}/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>--}}
 <script src="{{ url('themes/') }}/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-
+<script src="{{ url('themes/') }}/plugins/chartjs-old/Chart.min.js"></script>
+<?php
+        $x = 0;
+        $time_data = '';
+        $previous = '';
+        $number_data = 1;
+        $n_d = '';
+    foreach ($not_completed as $nc){
+        $d_t = date('H:i',strtotime($nc['created_at']));
+        if ($previous != $d_t){
+            $n_d .= $number_data;
+            $number_data = 1;
+            $time_data .= "\"" . $d_t . "\"";
+            if ($x < count($not_completed)){
+                $n_d .= ",";
+                $time_data .= ",";
+            }
+        }else{
+            $number_data++;
+        }
+        $previous = $d_t;
+        $x++;
+    }
+    echo $time_data;
+?>
 <script>
-    $(document).ready(function () {
 
 
-        //Initialize Select2 Elements
+    $(function () {
+
+        $( "#datepicker" ).datepicker();
+
+        var areaChartData = {
+            // labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
+            labels: [<?= @$time_data ?>],
+            datasets: [
+                {
+                    label: 'Electronics',
+                    fillColor: 'rgba(210, 214, 222, 1)',
+                    strokeColor: 'rgba(210, 214, 222, 1)',
+                    pointColor: 'rgba(210, 214, 222, 1)',
+                    pointStrokeColor: '#c1c7d1',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(220,220,220,1)',
+                    data: [{{ $n_d }}],
+                },
+            ]
+        };
+
+        var areaChartOptions = {
+            //Boolean - If we should show the scale at all
+            showScale: true,
+            //Boolean - Whether grid lines are shown across the chart
+            scaleShowGridLines: false,
+            //String - Colour of the grid lines
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            //Number - Width of the grid lines
+            scaleGridLineWidth: 1,
+            //Boolean - Whether to show horizontal lines (except X axis)
+            scaleShowHorizontalLines: true,
+            //Boolean - Whether to show vertical lines (except Y axis)
+            scaleShowVerticalLines: true,
+            //Boolean - Whether the line is curved between points
+            bezierCurve: true,
+            //Number - Tension of the bezier curve between points
+            bezierCurveTension: 0.3,
+            //Boolean - Whether to show a dot for each point
+            pointDot: false,
+            //Number - Radius of each point dot in pixels
+            pointDotRadius: 4,
+            //Number - Pixel width of point dot stroke
+            pointDotStrokeWidth: 1,
+            //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+            pointHitDetectionRadius: 20,
+            //Boolean - Whether to show a stroke for datasets
+            datasetStroke: true,
+            //Number - Pixel width of dataset stroke
+            datasetStrokeWidth: 2,
+            //Boolean - Whether to fill the dataset with a color
+            datasetFill: true,
+            //String - A legend template
+            //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+            maintainAspectRatio: true,
+            //Boolean - whether to make the chart responsive to window resizing
+            responsive: true
+        };
+
+        var lineChartCanvas = $('#lineChart').get(0).getContext('2d');
+        var lineChart = new Chart(lineChartCanvas);
+        var lineChartOptions = areaChartOptions;
+        lineChartOptions.datasetFill = false;
+        lineChart.Line(areaChartData, lineChartOptions);
         $('.select2').select2();
 
 
         $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
             checkboxClass: 'icheckbox_minimal-blue',
-            radioClass   : 'iradio_minimal-red'
+            radioClass: 'iradio_minimal-red'
 
         });
-        $("input[type=\"checkbox\"]").on("ifChanged",category_input_checker);
-        $("input[type=\"radio\"]").on("ifChanged",category_input_checker);
+        $("input[type=\"checkbox\"]").on("ifChanged", category_input_checker);
+        $("input[type=\"radio\"]").on("ifChanged", category_input_checker);
         //Red color scheme for iCheck
         $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
             checkboxClass: 'icheckbox_minimal-red',
-            radioClass   : 'iradio_minimal-red'
+            radioClass: 'iradio_minimal-red'
         });
         //Flat red color scheme for iCheck
         $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
             checkboxClass: 'icheckbox_flat-green',
-            radioClass   : 'iradio_flat-green'
+            radioClass: 'iradio_flat-green'
         });
-
-
-
     });
-
 </script>
 </body>
 </html>

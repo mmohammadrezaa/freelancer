@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Supports;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controler;
@@ -28,8 +29,9 @@ class AdminPanelConteroller extends Controller
 
     public function index(request $request)
     {
-        $Content = Tasks::limit(5)->orderBy('id','DESC')->get();
-        return view('auth.Dashboard',['Content' => $Content]);
+        $not_completed = Tasks::where('user_id',auth()->user()->id)->where('done',0)->where('created_at','>=',Carbon::now()->subHour())->get();
+        $Content = Tasks::where('user_id',auth()->user()->id)->limit(5)->orderBy('id','DESC')->get();
+        return view('auth.Dashboard',['Content' => $Content,'not_completed' => $not_completed]);
     }
 
 
@@ -125,7 +127,7 @@ class AdminPanelConteroller extends Controller
                     }
                     return redirect('Task/Add')->with('messagee','you must send data with method get');
                 }
-                $Content = Tasks::get();
+                $Content = Tasks::where('user_id',auth()->user()->id)->get();
                 return view('Task.List',['Content' => $Content,'count' => Tasks::count()]);
             case "Done":
                 if (!($request->isMethod('get'))){
